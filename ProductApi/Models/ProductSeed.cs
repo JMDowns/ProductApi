@@ -29,13 +29,36 @@ namespace ProductApi.Models
                 var department = departments[rnd.Next(0, 5)];
                 var productId = $"{x,-3:000}";
 
+                Product? relatedProduct = null;
+
+                var hasRelatedProduct = Convert.ToBoolean(rnd.Next(0, 2));
+                if (hasRelatedProduct)
+                {
+                    var radjective = adjectives[rnd.Next(0, 5)];
+                    var rmaterial = materials[rnd.Next(0, 5)];
+                    var rname = names[rnd.Next(0, 5)];
+                    var rdepartment = departments[rnd.Next(0, 5)];
+                    var rproductId = $"{x,-3:000}";
+
+                    relatedProduct = new Product
+                    {
+                        ProductNumber =
+                            $"{rdepartment.First()}{name.First()}{rproductId}",
+                        Name = $"{radjective} {rmaterial} {rname}",
+                        Price = (double)rnd.Next(1000, 9000) / 100,
+                        Department = rdepartment,
+                        RelatedProduct = null
+                    };
+                }
+
                 return new Product
                 {
                     ProductNumber =
                         $"{department.First()}{name.First()}{productId}",
                     Name = $"{adjective} {material} {name}",
                     Price = (double)rnd.Next(1000, 9000) / 100,
-                    Department = department
+                    Department = department,
+                    RelatedProduct = relatedProduct
                 };
             }));
 

@@ -52,7 +52,7 @@ namespace ProductApi.Controllers
 
             if (!string.IsNullOrEmpty(productNumber))
             {
-                result = result.Where(p => p.ProductNumber.Contains(productNumber));
+                result = result.Where(p => p.ProductNumber.Equals(productNumber));
             }
 
             return Ok(result
@@ -68,6 +68,82 @@ namespace ProductApi.Controllers
             try
             {
                 _context.Products.Add(product);
+                _context.SaveChanges();
+
+                return new CreatedResult($"/products/{product.ProductNumber.ToLower()}", product);
+            }
+            catch (Exception e)
+            {
+                // Typically an error log is produced here
+                return ValidationProblem(e.Message);
+            }
+        }
+
+        [HttpPatch]
+        [Route("{productNumber}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Product> PatchProduct([FromRoute] string productNumber, [FromBody] ProductPatch newProduct)
+        {
+            try
+            {
+                var productList = _context.Products as IQueryable<Product>;
+                var product = productList.First(p => p.ProductNumber.Equals(productNumber));
+
+                product.ProductNumber = newProduct.ProductNumber ?? product.ProductNumber;
+                product.Department = newProduct.Department ?? product.Department;
+                product.Name = newProduct.Name ?? product.Name;
+                product.Price = newProduct.Price ?? product.Price;
+                product.RelatedProduct = newProduct.RelatedProduct ?? product.RelatedProduct;
+
+                _context.Products.Update(product);
+                _context.SaveChanges();
+
+                return new CreatedResult($"/products/{product.ProductNumber.ToLower()}", product);
+            }
+            catch (Exception e)
+            {
+                // Typically an error log is produced here
+                return ValidationProblem(e.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("{productNumber}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Product> PutProduct([FromRoute] string productNumber, [FromBody] Product newProduct)
+        {
+            try
+            {
+                var productList = _context.Products as IQueryable<Product>;
+                var product = productList.First(p => p.ProductNumber.Equals(productNumber));
+
+                _context.Products.Remove(product);
+                _context.Products.Add(newProduct);
+                _context.SaveChanges();
+
+                return new CreatedResult($"/products/{product.ProductNumber.ToLower()}", product);
+            }
+            catch (Exception e)
+            {
+                // Typically an error log is produced here
+                return ValidationProblem(e.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{productNumber}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Product> DeleteProduct([FromRoute] string productNumber)
+        {
+            try
+            {
+                var productList = _context.Products as IQueryable<Product>;
+                var product = productList.First(p => p.ProductNumber.Equals(productNumber));
+
+                _context.Products.Remove(product);
                 _context.SaveChanges();
 
                 return new CreatedResult($"/products/{product.ProductNumber.ToLower()}", product);
