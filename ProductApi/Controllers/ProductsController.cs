@@ -94,7 +94,7 @@ namespace ProductApi.Controllers
                 product.Department = newProduct.Department ?? product.Department;
                 product.Name = newProduct.Name ?? product.Name;
                 product.Price = newProduct.Price ?? product.Price;
-                product.RelatedProduct = newProduct.RelatedProduct ?? product.RelatedProduct;
+                product.RelatedProducts = newProduct.RelatedProducts ?? product.RelatedProducts;
 
                 _context.Products.Update(product);
                 _context.SaveChanges();
@@ -144,6 +144,31 @@ namespace ProductApi.Controllers
                 var product = productList.First(p => p.ProductNumber.Equals(productNumber));
 
                 _context.Products.Remove(product);
+                _context.SaveChanges();
+
+                return new CreatedResult($"/products/{product.ProductNumber.ToLower()}", product);
+            }
+            catch (Exception e)
+            {
+                // Typically an error log is produced here
+                return ValidationProblem(e.Message);
+            }
+        }
+
+        [HttpPatch]
+        [Route("{productNumber}/addRelatedProduct")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Product> AddRelatedProduct([FromRoute] string productNumber, [FromBody] RelatedProduct relatedProduct)
+        {
+            try
+            {
+                var productList = _context.Products as IQueryable<Product>;
+                var product = productList.First(p => p.ProductNumber.Equals(productNumber));
+
+                product.RelatedProducts.Add(relatedProduct);
+
+                _context.Products.Update(product);
                 _context.SaveChanges();
 
                 return new CreatedResult($"/products/{product.ProductNumber.ToLower()}", product);

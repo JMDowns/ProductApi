@@ -28,6 +28,6 @@ namespace ProductApi.Models
         public string Department { get; set; }
 
         [Display(Name = "relatedProduct")]
-        public Product? RelatedProduct { get; set; }
+        public List<RelatedProduct> RelatedProducts { get; set; }
     }
 }
