@@ -27,7 +27,8 @@ namespace ProductApi.Models
         [Display(Name = "department")]
         public string Department { get; set; }
 
-        [Display(Name = "relatedProduct")]
-        public List<RelatedProduct> RelatedProducts { get; set; }
+        [Required]
+        [Display(Name = "relatedProducts")]
+        public virtual ICollection<RelatedProduct> RelatedProducts { get; set; }
     }
 }

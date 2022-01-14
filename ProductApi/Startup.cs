@@ -35,7 +35,7 @@ namespace ProductApi
             });
             services
                 .AddDbContext<ProductContext>(opt =>
-                    opt.UseInMemoryDatabase("Products"));
+                    opt.UseLazyLoadingProxies().UseInMemoryDatabase("Products"));
             services
                 .AddApiVersioning();
         }

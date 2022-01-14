@@ -60,14 +60,14 @@ namespace ProductApi.Models
                     
                 }
 
-                return new Product
+                return new Product()
                 {
                     ProductNumber =
                         $"{department.First()}{name.First()}{productId}",
                     Name = $"{adjective} {material} {name}",
-                    Price = (double)rnd.Next(1000, 9000) / 100,
+                    Price = (double) rnd.Next(1000, 9000) / 100,
                     Department = department,
-                    RelatedProducts = relatedProducts
+                    RelatedProducts = relatedProducts,
                 };
             }));
 
